@@ -25,7 +25,7 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 					{
 						year: _date[1].getFullYear(),
 						month: _date[1].getMonth() + 1,
-						day: _date[1].getDate() + 2, //remove "+ 2" don't forget
+						day: _date[1].getDate(),
 					},
 			  ]
 	);
@@ -74,7 +74,8 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 		);
 	}, [monthYear, date, type]);
 
-	const handleDatePick = (day) => {
+	const handleDatePick = (day, e) => {
+		if (!e.target.classList.contains("active")) return;
 		for (const item of days) {
 			if (item.month === day.month && item.day === day.day) {
 				setDate(
@@ -102,12 +103,25 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 									day: "",
 								},
 						  ]
-						: [
+						: +item.month === +date[0].month
+						? [
 								date[0],
 								{
 									year: item.year,
 									month: item.month,
 									day: item.day,
+								},
+						  ]
+						: [
+								{
+									year: item.year,
+									month: item.month,
+									day: item.day,
+								},
+								{
+									year: "",
+									month: "",
+									day: "",
 								},
 						  ]
 				);
@@ -123,6 +137,8 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 						item.current = false;
 					} else {
 						if (
+							+item.year !== +date[0].year &&
+							+item.year !== +date[1].year &&
 							+item.month !== +date[0].month &&
 							+item.month !== +date[1].month &&
 							+item.day !== +date[0].day &&
@@ -141,10 +157,6 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 	const changeMonthYear = ({ month, year }) => {
 		setMonthYear({ year, month });
 	};
-
-	useEffect(() => {
-		console.log(date);
-	});
 
 	return (
 		<>
@@ -176,12 +188,14 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 									: +day.day > +date[0].day &&
 									  +day.day < +date[1].day &&
 									  +day.month >= +date[0].month &&
-									  +day.month <= +date[1].month
+									  +day.month <= +date[1].month &&
+									  +day.year >= +date[0].year &&
+									  +day.year <= +date[1].year
 									? "active in-between"
 									: "active"
 								: ""
 						}
-						onClick={() => handleDatePick(day)}
+						onClick={(e) => handleDatePick(day, e)}
 					>
 						{day.day}
 					</Styled.DatepickerDate>
@@ -190,13 +204,17 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 
 			<Calendarhr />
 
-			<Apply changeCurrentDate={changeCurrentDate} date={date} />
+			<Apply
+				changeCurrentDate={changeCurrentDate}
+				date={date}
+				type={type}
+			/>
 		</>
 	);
 }
 
 Datepicker.propTypes = {
-	_date: PropTypes.instanceOf(Date),
+	_date: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.array]),
 	changeCurrentDate: PropTypes.func,
 	type: PropTypes.string,
 };

@@ -14,9 +14,21 @@ function Calendar({ type }) {
 		setDate(type === "single" ? new Date() : [new Date(), new Date()]);
 	}, []);
 
-	const changeCurrentDate = ({ year, month, day }) => {
-		console.log(year, month, day);
-		setDate(new Date(+year, +month - 1, +day));
+	const changeCurrentDate = (newDate) => {
+		type === "single"
+			? setDate(new Date(+newDate.year, +newDate.month - 1, +newDate.day))
+			: setDate([
+					new Date(
+						+newDate[0].year,
+						+newDate[0].month - 1,
+						+newDate[0].day
+					),
+					new Date(
+						+newDate[1].year,
+						+newDate[1].month - 1,
+						+newDate[1].day
+					),
+			  ]);
 		setShowDatepicker(false);
 	};
 
