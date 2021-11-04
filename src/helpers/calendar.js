@@ -68,35 +68,41 @@ export const isDate = (date) => {
 	return isDate && isValidDate;
 };
 
-//(bool) Checks if two date values are of the same month and year
-export const isSameMonth = (date, basedate = new Date()) => {
-	if (!(isDate(date) && isDate(basedate))) return false;
+//(bool) Checks if date values are not empty(valid)
+export const isDateValid = (date) => {
+	const dateDate = date.day;
+	const dateMonth = date.month;
+	const dateYear = date.year;
 
-	const basedateMonth = +basedate.getMonth() + 1;
-	const basedateYear = basedate.getFullYear();
-
-	const dateMonth = +date.getMonth() + 1;
-	const dateYear = date.getFullYear();
-
-	return +basedateMonth === +dateMonth && +basedateYear === +dateYear;
+	return dateDate !== "" && dateMonth !== "" && dateYear !== "";
 };
 
-//(bool) Checks if two date values are the same day
-export const isSameDay = (date, basedate = new Date()) => {
-	if (!(isDate(date) && isDate(basedate))) return false;
+//(bool) Checks if two date objects are the same
+export const isSameDate = (date, basedate = new Date()) => {
+	const basedateDate = basedate.day;
+	const basedateMonth = +basedate.month;
+	const basedateYear = basedate.year;
 
-	const basedateDate = basedate.getDate();
-	const basedateMonth = +basedate.getMonth() + 1;
-	const basedateYear = basedate.getFullYear();
-
-	const dateDate = date.getDate();
-	const dateMonth = +date.getMonth() + 1;
-	const dateYear = date.getFullYear();
+	const dateDate = date.day;
+	const dateMonth = +date.month;
+	const dateYear = date.year;
 
 	return (
 		+basedateDate === +dateDate &&
 		+basedateMonth === +dateMonth &&
 		+basedateYear === +dateYear
+	);
+};
+
+//(bool) Checks if date object between two another dates
+export const isBetweenDates = (date, firstDate, secondDate) => {
+	return (
+		+date.day > +firstDate.day &&
+		+date.day < +secondDate.day &&
+		+date.month >= +firstDate.month &&
+		+date.month <= +secondDate.month &&
+		+date.year >= +firstDate.year &&
+		+date.year <= +secondDate.year
 	);
 };
 

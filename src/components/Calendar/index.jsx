@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
-import PropTypes, { nominalTypeHack } from "prop-types";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import * as Styled from "./styles.js";
 import { getDateISO } from "../../helpers/calendar";
-import Datepicker from "../Datepicker/index.js";
+import Datepicker from "../Datepicker/index.jsx";
 
 function Calendar({ type }) {
 	const [date, setDate] = useState(
 		type === "single" ? new Date() : [new Date(), new Date()]
 	);
 	const [showDatepicker, setShowDatepicker] = useState(false);
-
-	useEffect(() => {
-		setDate(type === "single" ? new Date() : [new Date(), new Date()]);
-	}, []);
 
 	const changeCurrentDate = (newDate) => {
 		type === "single"
@@ -57,12 +53,8 @@ function Calendar({ type }) {
 
 				<Styled.CalendarArrow
 					onClick={() => setShowDatepicker(!showDatepicker)}
-					style={{
-						transform: `rotate(${
-							showDatepicker ? "225" : "45"
-						}deg)`,
-						marginLeft: `${type !== "single" ? "20px" : "0"}`,
-					}}
+					showDatepicker={showDatepicker}
+					moveAway={type === "single"}
 				/>
 			</Styled.CalendarHeader>
 

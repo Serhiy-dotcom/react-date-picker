@@ -25,10 +25,14 @@ export const CalendarArrow = styled.i`
 	height: fit-content;
 	width: auto;
 	margin-right: 20px;
+	margin-left: ${({ moveAway }) => (moveAway ? "0" : "20px")};
 	border-width: 0 3px 3px 0;
 	display: inline-block;
 	padding: 4px;
 	cursor: pointer;
+	transform: rotate(
+		${({ showDatepicker }) => (showDatepicker ? "225" : "45")}deg
+	);
 `;
 
 export const Calendarhr = styled.hr`
