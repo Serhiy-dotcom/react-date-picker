@@ -30,3 +30,19 @@ export const CalendarArrow = styled.i`
 	padding: 4px;
 	cursor: pointer;
 `;
+
+export const Calendarhr = styled.hr`
+	background-color: #e6eaed;
+	height: 1px;
+	border: none;
+	width: 100%;
+	margin: 0;
+`;
+
+export const CalendarDash = styled.hr`
+	height: 2px;
+	width: 20px;
+	background-color: #a1acb5;
+	border: none;
+	margin: 0 10px;
+`;

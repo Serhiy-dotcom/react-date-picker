@@ -5,7 +5,7 @@ function App() {
 	return (
 		<div className="app">
 			<div className="container">
-				<Calendar />
+				<Calendar type="range" />
 			</div>
 		</div>
 	);

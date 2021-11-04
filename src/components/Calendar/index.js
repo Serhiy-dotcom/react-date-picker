@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
+import PropTypes, { nominalTypeHack } from "prop-types";
 import * as Styled from "./styles.js";
 import { getDateISO } from "../../helpers/calendar";
 import Datepicker from "../Datepicker/index.js";
 
-function Calendar() {
-	const [date, setDate] = useState(new Date());
+function Calendar({ type }) {
+	const [date, setDate] = useState(
+		type === "single" ? new Date() : [new Date(), new Date()]
+	);
 	const [showDatepicker, setShowDatepicker] = useState(false);
 
 	useEffect(() => {
-		setDate(new Date());
+		setDate(type === "single" ? new Date() : [new Date(), new Date()]);
 	}, []);
 
 	const changeCurrentDate = ({ year, month, day }) => {
@@ -21,8 +24,24 @@ function Calendar() {
 		<Styled.CalendarContainer>
 			<Styled.CalendarHeader>
 				<Styled.CalendarDate>
-					{date ? getDateISO(date) : getDateISO(new Date())}
+					{date
+						? type === "single"
+							? getDateISO(date)
+							: getDateISO(date[0])
+						: getDateISO(new Date())}
 				</Styled.CalendarDate>
+
+				{type !== "single" && (
+					<>
+						<Styled.CalendarDash />
+
+						<Styled.CalendarDate>
+							{date
+								? getDateISO(date[1])
+								: getDateISO(new Date())}
+						</Styled.CalendarDate>
+					</>
+				)}
 
 				<Styled.CalendarArrow
 					onClick={() => setShowDatepicker(!showDatepicker)}
@@ -30,28 +49,26 @@ function Calendar() {
 						transform: `rotate(${
 							showDatepicker ? "225" : "45"
 						}deg)`,
+						marginLeft: `${type !== "single" ? "20px" : "0"}`,
 					}}
 				/>
 			</Styled.CalendarHeader>
 
-			<hr
-				style={{
-					backgroundColor: "#E6EAED",
-					height: "1px",
-					border: "none",
-					width: "100%",
-					margin: "0",
-				}}
-			/>
+			<Styled.Calendarhr />
 
 			{showDatepicker && (
 				<Datepicker
 					_date={date}
 					changeCurrentDate={changeCurrentDate}
+					type={type}
 				/>
 			)}
 		</Styled.CalendarContainer>
 	);
 }
+
+Calendar.propTypes = {
+	type: PropTypes.string,
+};
 
 export default Calendar;

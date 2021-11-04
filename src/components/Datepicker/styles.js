@@ -27,14 +27,20 @@ export const DatepickerDate = styled(DatepickerCell)`
 	font-weight: normal;
 	color: #adb6be;
 	font-weight: 500;
+	cursor: pointer;
 
 	&.active {
 		color: #333;
-		cursor: pointer;
+		border-radius: 3px;
 
 		&.current {
 			background-color: #0f5099;
 			color: #fff;
+		}
+
+		&.in-between {
+			background-color: #e5f1ff;
+			color: #346caa;
 		}
 	}
 `;

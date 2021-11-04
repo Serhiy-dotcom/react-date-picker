@@ -152,19 +152,32 @@ const calendayBuilder = (month = THIS_MONTH, year = THIS_YEAR) => {
 	//Builds dates to be displayed from previous month
 	const prevMonthDates = [...new Array(daysFromPrevMonth)].map((n, index) => {
 		const day = index + 1 + (prevMonthDays - daysFromPrevMonth);
-		return [prevMonthYear, zeroPad(prevMonth, 2), zeroPad(day, 2)];
+		return {
+			year: prevMonthYear,
+			month: zeroPad(prevMonth, 2),
+			day: zeroPad(day, 2),
+		};
 	});
 
 	//Builds dates to be displayed from current month
 	const thisMonthDates = [...new Array(monthDays)].map((n, index) => {
 		const day = index + 1;
-		return [year, zeroPad(month, 2), zeroPad(day, 2)];
+
+		return {
+			year: year,
+			month: zeroPad(month, 2),
+			day: zeroPad(day, 2),
+		};
 	});
 
 	//Builds dates to be displayed from next month
 	const nextMonthDates = [...new Array(daysFromNextMonth)].map((n, index) => {
 		const day = index + 1;
-		return [nextMonthYear, zeroPad(nextMonth, 2), zeroPad(day, 2)];
+		return {
+			year: nextMonthYear,
+			month: zeroPad(nextMonth, 2),
+			day: zeroPad(day, 2),
+		};
 	});
 
 	//Combines all dates from previous, current and next months
