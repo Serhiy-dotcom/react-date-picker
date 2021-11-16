@@ -96,7 +96,22 @@ export const isSameDate = (date, basedate = new Date()) => {
 
 //(bool) Checks if date object between two another dates
 export const isBetweenDates = (date, firstDate, secondDate) => {
-	return (
+	if(
+		(+date.year <= +firstDate.year && +date.month <= +firstDate.month && +date.day < +firstDate.day) || 
+		(+date.year >= +secondDate.year && +date.month >= +secondDate.month && +date.day > +secondDate.day) || 
+		(+date.month < +firstDate.month && +date.year <= +firstDate.year) ||
+		(+date.year < +firstDate.year)
+	){
+		return false;
+	}else if(firstDate.month != secondDate.month || firstDate.year != secondDate.year){
+		return (
+			(+date.month >= firstDate.month && +date.day > firstDate.day)
+			+date.year >= +firstDate.year &&
+			+date.year <= +secondDate.year
+		)
+	}
+
+	return ( 
 		+date.day > +firstDate.day &&
 		+date.day < +secondDate.day &&
 		+date.month >= +firstDate.month &&

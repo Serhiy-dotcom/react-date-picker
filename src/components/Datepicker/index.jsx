@@ -95,26 +95,13 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 					day: "",
 				},
 			]);
-		} else if (+day.month === +date[0].month) {
+		} else {
 			setDate([
 				date[0],
 				{
 					year: day.year,
 					month: day.month,
 					day: day.day,
-				},
-			]);
-		} else {
-			setDate([
-				{
-					year: day.year,
-					month: day.month,
-					day: day.day,
-				},
-				{
-					year: "",
-					month: "",
-					day: "",
 				},
 			]);
 		}
@@ -144,6 +131,11 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 	const changeMonthYear = ({ month, year }) => {
 		setMonthYear({ year, month });
 	};
+
+	useEffect(() => {
+		console.log(days);
+		console.log(date);
+	});
 
 	return (
 		<>
