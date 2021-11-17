@@ -6,9 +6,9 @@ function Apply({ changeCurrentDate, date, type }) {
 	const handleApply = () => {
 		type === "single"
 			? changeCurrentDate(date)
-			: +date[1].day.length !== 0 &&
-			  +date[1].month.length !== 0 &&
-			  +date[1].year.length !== 0 &&
+			: +date.endDate.day.length !== 0 &&
+			  +date.endDate.month.length !== 0 &&
+			  +date.endDate.year.length !== 0 &&
 			  changeCurrentDate(date);
 	};
 

@@ -1,9 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as Styled from "./styles.js";
-import { isBetweenDates } from "../../../helpers/calendar.js";
+import {
+	isBetweenDates,
+	getDateObj,
+	isSameDate,
+} from "../../../helpers/calendar.js";
 
-function Date({ day, monthYear, date, handleDatePick, type }) {
+function Date({ day, monthYear, date, prevDates, handleDatePick, type }) {
 	return (
 		<Styled.Date
 			className={
@@ -13,15 +17,40 @@ function Date({ day, monthYear, date, handleDatePick, type }) {
 							? "active current"
 							: "active"
 						: ""
+					: type === "range"
+					? +day.month === +monthYear.month
+						? day.current === true
+							? "active current"
+							: isBetweenDates(day, date.startDate, date.endDate)
+							? "active in-between"
+							: "active"
+						: ""
 					: +day.month === +monthYear.month
 					? day.current === true
 						? "active current"
-						: isBetweenDates(day, date[0], date[1])
+						: isBetweenDates(day, date.startDate, date.endDate)
 						? "active in-between"
+						: prevDates.some(elem =>
+								isBetweenDates(
+									day,
+									getDateObj(elem.startDate),
+									getDateObj(elem.endDate)
+								)
+						  )
+						? "active picked"
+						: prevDates.some(
+								elem =>
+									isSameDate(
+										day,
+										getDateObj(elem.startDate)
+									) ||
+									isSameDate(day, getDateObj(elem.endDate))
+						  )
+						? "active currented"
 						: "active"
 					: ""
 			}
-			onClick={(e) => handleDatePick(day, e)}
+			onClick={e => handleDatePick(day, e)}
 		>
 			{day.day}
 		</Styled.Date>
@@ -31,7 +60,8 @@ function Date({ day, monthYear, date, handleDatePick, type }) {
 Date.propTypes = {
 	day: PropTypes.object,
 	monthYear: PropTypes.object,
-	date: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+	date: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.array]),
+	prevDates: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 	handleDatePick: PropTypes.func,
 	type: PropTypes.string,
 };

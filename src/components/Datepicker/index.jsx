@@ -4,6 +4,7 @@ import calendar, {
 	WEEK_DAYS,
 	isSameDate,
 	isDateValid,
+	getDateObj,
 } from "../../helpers/calendar.js";
 import * as Styled from "./styles.js";
 import { Calendarhr } from "../Calendar/styles.js";
@@ -16,23 +17,12 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 	const [monthYear, setMonthYear] = useState({});
 	const [date, setDate] = useState(
 		type === "single"
-			? {
-					year: _date.getFullYear(),
-					month: _date.getMonth() + 1,
-					day: _date.getDate(),
+			? getDateObj(_date)
+			: {
+					id: _date[_date.length - 1].id,
+					startDate: getDateObj(_date[_date.length - 1].startDate),
+					endDate: getDateObj(_date[_date.length - 1].endDate),
 			  }
-			: [
-					{
-						year: _date[0].getFullYear(),
-						month: _date[0].getMonth() + 1,
-						day: _date[0].getDate(),
-					},
-					{
-						year: _date[1].getFullYear(),
-						month: _date[1].getMonth() + 1,
-						day: _date[1].getDate(),
-					},
-			  ]
 	);
 
 	useEffect(() => {
@@ -43,15 +33,15 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 						month: _date.getMonth() + 1,
 				  }
 				: {
-						year: _date[0].getFullYear(),
-						month: _date[0].getMonth() + 1,
+						year: _date[_date.length - 1].startDate.getFullYear(),
+						month: _date[_date.length - 1].startDate.getMonth() + 1,
 				  }
 		);
 	}, [_date, type]);
 
 	useEffect(() => {
 		setDays(
-			[...calendar(monthYear.month, monthYear.year)].map((item) => {
+			[...calendar(monthYear.month, monthYear.year)].map(item => {
 				return type === "single"
 					? {
 							...item,
@@ -60,10 +50,8 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 					: {
 							...item,
 							current:
-								isSameDate(item, date[0]) ||
-								isSameDate(item, date[1])
-									? true
-									: false,
+								isSameDate(item, date.startDate) ||
+								isSameDate(item, date.endDate),
 					  };
 			})
 		);
@@ -77,37 +65,42 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 				month: day.month,
 				day: day.day,
 			});
-		} else if (
-			isDateValid(date[1]) ||
-			(+day.year <= +date[0].year &&
-				+day.month <= +date[0].month &&
-				+day.day < +date[0].day)
-		) {
-			setDate([
-				{
-					year: day.year,
-					month: day.month,
-					day: day.day,
-				},
-				{
-					year: "",
-					month: "",
-					day: "",
-				},
-			]);
 		} else {
-			setDate([
-				date[0],
-				{
+			if (
+				isDateValid(date.endDate) ||
+				(+day.year <= +date.startDate.year &&
+					+day.month <= +date.startDate.month &&
+					+day.day < +date.startDate.day) ||
+				(+day.year <= +date.startDate.year &&
+					+day.month < +date.startDate.month)
+			) {
+				setDate({
+					id: date.id + 1,
+					startDate: {
+						year: day.year,
+						month: day.month,
+						day: day.day,
+					},
+					endDate: {
+						year: "",
+						month: "",
+						day: "",
+					},
+				});
+			} else {
+				let local = date;
+				local.endDate = {
 					year: day.year,
 					month: day.month,
 					day: day.day,
-				},
-			]);
+				};
+
+				setDate(local);
+			}
 		}
 
 		setDays(
-			days.map((item) => {
+			days.map(item => {
 				if (item.month === day.month && item.day === day.day) {
 					item.current = true;
 				} else {
@@ -115,9 +108,11 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 						item.current = false;
 					} else {
 						if (
-							!isSameDate(item, date[0]) &&
-							!isSameDate(item, date[1])
+							isSameDate(item, date.startDate) ||
+							isSameDate(item, date.endDate)
 						) {
+							item.current = true;
+						} else {
 							item.current = false;
 						}
 					}
@@ -132,11 +127,6 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 		setMonthYear({ year, month });
 	};
 
-	useEffect(() => {
-		console.log(days);
-		console.log(date);
-	});
-
 	return (
 		<>
 			<MonthSwitcher
@@ -145,18 +135,19 @@ function Datepicker({ _date, changeCurrentDate, type }) {
 			/>
 
 			<Styled.DatepickerDates>
-				{Object.values(WEEK_DAYS).map((weekDay) => (
+				{Object.values(WEEK_DAYS).map(weekDay => (
 					<Styled.DatepickerDay key={weekDay}>
 						{weekDay}
 					</Styled.DatepickerDay>
 				))}
 
-				{days.map((day) => (
+				{days.map(day => (
 					<Date
 						key={day.year + day.month + day.day}
 						day={day}
 						monthYear={monthYear}
 						date={date}
+						prevDates={_date}
 						handleDatePick={handleDatePick}
 						type={type}
 					/>

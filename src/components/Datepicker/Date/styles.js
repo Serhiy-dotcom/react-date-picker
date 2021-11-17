@@ -26,5 +26,13 @@ export const Date = styled.span`
 			background-color: #e5f1ff;
 			color: #346caa;
 		}
+
+		&.currented {
+			background-color: #cecece;
+		}
+
+		&.picked {
+			background-color: #ebf0f2;
+		}
 	}
 `;

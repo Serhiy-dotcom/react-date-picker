@@ -1,73 +1,94 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
 import * as Styled from "./styles.js";
+import PropTypes from "prop-types";
 import { getDateISO } from "../../helpers/calendar";
 import Datepicker from "../Datepicker/index.jsx";
+import DatesList from "../DatesList/index.jsx";
 
 function Calendar({ type }) {
 	const [date, setDate] = useState(
-		type === "single" ? new Date() : [new Date(), new Date()]
+		type === "single"
+			? new Date()
+			: [{ id: 1, startDate: new Date(), endDate: new Date() }]
 	);
 	const [showDatepicker, setShowDatepicker] = useState(false);
 
-	const changeCurrentDate = (newDate) => {
+	const changeCurrentDate = newDate => {
 		type === "single"
 			? setDate(new Date(+newDate.year, +newDate.month - 1, +newDate.day))
 			: setDate([
-					new Date(
-						+newDate[0].year,
-						+newDate[0].month - 1,
-						+newDate[0].day
-					),
-					new Date(
-						+newDate[1].year,
-						+newDate[1].month - 1,
-						+newDate[1].day
-					),
+					...date,
+					{
+						id: date[date.length - 1].id + 1,
+						startDate: new Date(
+							+newDate.startDate.year,
+							+newDate.startDate.month - 1,
+							+newDate.startDate.day
+						),
+						endDate: new Date(
+							+newDate.endDate.year,
+							+newDate.endDate.month - 1,
+							+newDate.endDate.day
+						),
+					},
 			  ]);
-		setShowDatepicker(false);
+
+		if (type === "single" || type === "range") {
+			setShowDatepicker(false);
+		}
+	};
+
+	const deleteDate = id => {
+		if (date.length > 1) {
+			setDate(date.filter(elem => elem.id !== id));
+		}
 	};
 
 	return (
-		<Styled.CalendarContainer>
-			<Styled.CalendarHeader>
-				<Styled.CalendarDate>
-					{date
-						? type === "single"
-							? getDateISO(date)
-							: getDateISO(date[0])
-						: getDateISO(new Date())}
-				</Styled.CalendarDate>
-
-				{type !== "single" && (
-					<>
-						<Styled.CalendarDash />
-
-						<Styled.CalendarDate>
-							{date
-								? getDateISO(date[1])
-								: getDateISO(new Date())}
-						</Styled.CalendarDate>
-					</>
-				)}
-
-				<Styled.CalendarArrow
-					onClick={() => setShowDatepicker(!showDatepicker)}
-					showDatepicker={showDatepicker}
-					moveAway={type === "single"}
-				/>
-			</Styled.CalendarHeader>
-
-			<Styled.Calendarhr />
-
-			{showDatepicker && (
-				<Datepicker
-					_date={date}
-					changeCurrentDate={changeCurrentDate}
-					type={type}
-				/>
+		<>
+			{type === "multiRange" && (
+				<DatesList date={date} deleteDate={deleteDate} />
 			)}
-		</Styled.CalendarContainer>
+			<Styled.CalendarContainer>
+				<Styled.CalendarHeader>
+					<Styled.CalendarDate>
+						{date
+							? type === "single"
+								? getDateISO(date)
+								: getDateISO(date[date.length - 1].startDate)
+							: getDateISO(new Date())}
+					</Styled.CalendarDate>
+
+					{type !== "single" && (
+						<>
+							<Styled.CalendarDash />
+
+							<Styled.CalendarDate>
+								{date
+									? getDateISO(date[date.length - 1].endDate)
+									: getDateISO(new Date())}
+							</Styled.CalendarDate>
+						</>
+					)}
+
+					<Styled.CalendarArrow
+						onClick={() => setShowDatepicker(!showDatepicker)}
+						showDatepicker={showDatepicker}
+						moveAway={type === "single"}
+					/>
+				</Styled.CalendarHeader>
+
+				<Styled.Calendarhr />
+
+				{showDatepicker && (
+					<Datepicker
+						_date={date}
+						changeCurrentDate={changeCurrentDate}
+						type={type}
+					/>
+				)}
+			</Styled.CalendarContainer>
+		</>
 	);
 }
 

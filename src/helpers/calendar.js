@@ -61,7 +61,7 @@ export const getMonthFirstDay = (month = THIS_MONTH, year = THIS_YEAR) => {
 };
 
 //(bool) Checks if a value is a date
-export const isDate = (date) => {
+export const isDate = date => {
 	const isDate = Object.prototype.toString.call(date) === "[object Date]";
 	const isValidDate = date && !Number.isNaN(date.valueOf());
 
@@ -69,7 +69,7 @@ export const isDate = (date) => {
 };
 
 //(bool) Checks if date values are not empty(valid)
-export const isDateValid = (date) => {
+export const isDateValid = date => {
 	const dateDate = date.day;
 	const dateMonth = date.month;
 	const dateYear = date.year;
@@ -96,22 +96,41 @@ export const isSameDate = (date, basedate = new Date()) => {
 
 //(bool) Checks if date object between two another dates
 export const isBetweenDates = (date, firstDate, secondDate) => {
-	if(
-		(+date.year <= +firstDate.year && +date.month <= +firstDate.month && +date.day < +firstDate.day) || 
-		(+date.year >= +secondDate.year && +date.month >= +secondDate.month && +date.day > +secondDate.day) || 
+	if (
+		(+date.year <= +firstDate.year &&
+			+date.month <= +firstDate.month &&
+			+date.day < +firstDate.day) ||
+		(+date.year >= +secondDate.year &&
+			+date.month >= +secondDate.month &&
+			+date.day > +secondDate.day) ||
 		(+date.month < +firstDate.month && +date.year <= +firstDate.year) ||
-		(+date.year < +firstDate.year)
-	){
+		+date.year < +firstDate.year ||
+		(+date.month > +secondDate.month && +date.year >= +secondDate.year)
+	) {
 		return false;
-	}else if(firstDate.month != secondDate.month || firstDate.year != secondDate.year){
+	} else if (
+		firstDate.month !== secondDate.month ||
+		firstDate.year !== secondDate.year
+	) {
+		if (
+			(+date.year === +firstDate.year &&
+				+date.month === +firstDate.month &&
+				+date.day === +firstDate.day) ||
+			(+date.year === +secondDate.year &&
+				+date.month === +secondDate.month &&
+				+date.day === +secondDate.day)
+		) {
+			return false;
+		}
+
 		return (
-			(+date.month >= firstDate.month && +date.day > firstDate.day)
-			+date.year >= +firstDate.year &&
-			+date.year <= +secondDate.year
-		)
+			(+date.month >= firstDate.month && +date.day > firstDate.day) +
+				date.year >=
+				+firstDate.year && +date.year <= +secondDate.year
+		);
 	}
 
-	return ( 
+	return (
 		+date.day > +firstDate.day &&
 		+date.day < +secondDate.day &&
 		+date.month >= +firstDate.month &&
@@ -131,6 +150,17 @@ export const getDateISO = (date = new Date()) => {
 		zeroPad(+date.getMonth() + 1, 2),
 		zeroPad(+date.getDate(), 2),
 	].join("-");
+};
+
+//(string) Formats the given date as object with such fields year, month, day
+export const getDateObj = (date = new Date()) => {
+	if (!isDate(date)) return null;
+
+	return {
+		year: +date.getFullYear(),
+		month: +date.getMonth() + 1,
+		day: +date.getDate(),
+	};
 };
 
 //({month, year}) Gets the month and year before the given month and year

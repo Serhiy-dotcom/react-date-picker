@@ -5,10 +5,13 @@ function App() {
 	return (
 		<div className="app">
 			<div className="container">
-				<Calendar type="range" />
+				<Calendar type="multiRange" />
 			</div>
 		</div>
 	);
 }
+
+//TODO
+//transform date array into object
 
 export default App;
